@@ -1,0 +1,1213 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>TCL互选投放复盘 · 2026 YTD</title>
+<style>
+:root {
+  --pri: #0099d4; --pri-dark: #0078a8; --pri-light: #e6f5fb;
+  --comp: #a09c98; --total: #5a5a55; --pan: #3a3a36;
+  --bg: #f7f7f5; --card: #ffffff; --txt: #2a2a28; --muted: #6e6c68;
+  --line: #e8e6e2; --good: #2f8f5f; --bad: #c74a3a; --warn: #d99a2b;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--txt);
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px; line-height: 1.55; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 32px 24px 80px; }
+.hero { background: linear-gradient(135deg, var(--pri) 0%, var(--pri-dark) 100%);
+  color: #fff; padding: 36px 32px; border-radius: 14px; margin-bottom: 28px;
+  box-shadow: 0 6px 24px rgba(0,153,212,0.18); }
+.hero h1 { font-size: 28px; margin: 0 0 8px; font-weight: 700; }
+.hero .sub { font-size: 14px; opacity: 0.88; }
+.hero .filter-note { font-size: 12px; opacity: 0.75; margin-top: 6px; padding: 6px 12px;
+  background: rgba(255,255,255,0.12); border-radius: 6px; display: inline-block; }
+.tl-cards-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0 32px; }
+.tl-card { background: var(--card); border-radius: 12px; padding: 18px 20px;
+  border-top: 4px solid var(--pri); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.tl-card .lbl { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.tl-card .val { font-size: 22px; font-weight: 700; color: var(--pri-dark); }
+.tl-card .desc { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+.sec { background: var(--card); border-radius: 12px; padding: 24px 26px;
+  margin-bottom: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.sec h2 { font-size: 19px; margin: 0 0 16px; padding-left: 12px; border-left: 4px solid var(--pri);
+  color: var(--pan); font-weight: 700; }
+.sec h3 { font-size: 15px; margin: 22px 0 10px; color: var(--pri-dark); font-weight: 600; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+th { background: #f0efeb; font-weight: 600; color: var(--pan); white-space: nowrap; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.row-hl { background: var(--pri-light) !important; font-weight: 600; }
+.row-hl td { color: var(--pri-dark); }
+.row-total { background: #f0efeb; font-style: italic; }
+.row-xd { background: #fafaf7; color: var(--muted); }
+.row-good { background: #eef9f2; }
+.row-agency { background: #fff8eb; }
+.case-table td { vertical-align: top; line-height: 1.55; font-size: 12px; padding: 10px 12px; }
+.case-table td:first-child { background: #fafaf7; font-weight: 600; color: var(--pan); width: 13%; }
+.case-table thead th { text-align: center; font-size: 13px; padding: 10px 12px; }
+.n-good { color: var(--good); font-weight: 600; }
+.n-bad { color: var(--bad); font-weight: 600; }
+.n-warn { color: var(--warn); }
+.chg { font-size: 12px; font-weight: 600; padding: 1px 5px; border-radius: 3px; }
+.chg.good { background: #eaf6ee; color: var(--good); }
+.chg.bad { background: #fbe9e6; color: var(--bad); }
+.chg.n { color: var(--muted); }
+.tag-good { display: inline-block; background: #eaf6ee; color: var(--good);
+  padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.tag-info { display: inline-block; background: var(--pri-light); color: var(--pri-dark);
+  padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.callout { padding: 12px 16px; border-radius: 8px; margin: 14px 0; font-size: 13px; line-height: 1.65; }
+.callout.good { background: #eaf6ee; border-left: 4px solid var(--good); color: #1f5a3a; }
+.callout.warn { background: #fff5e6; border-left: 4px solid var(--warn); color: #7a5a18; }
+.callout.info { background: var(--pri-light); border-left: 4px solid var(--pri); color: var(--pri-dark); }
+.dual-chart { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0; }
+.chart-box { background: #fafaf7; border-radius: 8px; padding: 14px; }
+.chart-box .title { font-size: 13px; font-weight: 600; color: var(--pan); margin-bottom: 8px; text-align: center; }
+.quad-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 14px 0 18px; }
+.quad-card { background: #fafaf7; border-radius: 8px; padding: 12px 14px; border-top: 3px solid var(--line); }
+.quad-card.A { border-top-color: var(--pri); background: var(--pri-light); }
+.quad-card.B { border-top-color: var(--good); background: #eef9f2; }
+.quad-card .qn { font-size: 16px; font-weight: 700; color: var(--pan); }
+.quad-card .qc { font-size: 22px; font-weight: 700; color: var(--pri-dark); margin: 4px 0; }
+.quad-card .qd { font-size: 11px; color: var(--muted); }
+.scatter-wrap { background: #fafaf7; border-radius: 8px; padding: 16px; margin: 14px 0; }
+.vid-link { cursor: pointer; color: var(--pri); font-size: 12px;
+  padding: 1px 6px; border-radius: 3px; background: var(--pri-light);
+  transition: all 0.2s; user-select: none; }
+.vid-link:hover { background: var(--pri); color: #fff; }
+.vid-link.copied { background: var(--good); color: #fff; }
+.vid-link.copied::after { content: " ✓"; }
+.kol-insight { font-size: 12px; color: var(--muted); margin-top: 6px; padding-left: 10px;
+  border-left: 2px solid var(--line); line-height: 1.5; }
+.foot { text-align: center; color: var(--muted); font-size: 12px; padding: 24px 0 0; }
+.kol-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; }
+.kol-chip { display: inline-block; background: #eef9f2; color: var(--good);
+  padding: 3px 9px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+</style>
+</head><body>
+<div class="wrap">
+
+<div class="hero">
+  <h1>TCL互选投放复盘 · 2026 YTD</h1>
+  <div class="sub">数据周期：2026 YTD｜对比基准：大家电整体</div>
+  <div class="filter-note">📌 数据口径：已剔除官号 + 高管号｜样本 119 单 / 105 位达人</div>
+</div>
+<div class="tl-cards-4">
+  <div class="tl-card">
+    <div class="lbl">订单规模</div>
+    <div class="val">119</div>
+    <div class="desc">119 单投放<br/>友赞份额（大家电） <b>17.66%</b>（领先）</div>
+  </div>
+  <div class="tl-card">
+    <div class="lbl">CPM 成本</div>
+    <div class="val">¥41.64</div>
+    <div class="desc">高于行业均值（需优化）</div>
+  </div>
+  <div class="tl-card">
+    <div class="lbl">爱心赞率</div>
+    <div class="val">0.62%</div>
+    <div class="desc">略低于 大家电整体</div>
+  </div>
+  <div class="tl-card">
+    <div class="lbl">加热占比 / 好样本数</div>
+    <div class="val">1.85% / 0</div>
+    <div class="desc">加热占比 较低<br/>好样本 ≥2 项指标降本</div>
+  </div>
+</div>
+
+<div class="sec">
+  <h2>① 整体竞争对比 — TCL vs 大家电头部品牌</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+    📌 表注：<b>友赞份额（大家电） = 该品牌综合_爱心赞 ÷ 大家电整体综合_爱心赞</b>，来自 brand_summary 直读（含全部品牌投放含官号高管，便于跨品牌对比）；TCL友赞份额 <b>3.84%</b>。其余指标（互动率/CPM/CPE/友赞成本）为剔除官号+高管后的真实口径；消电大盘行作为大盘水位参考（友赞份额列对它无意义留 -）。竞品达人数 = 明细按主体匹配 + 流量主去重；大家电整体/消电大盘为聚合行，达人数不可逆故留 -。
+  </p>
+  <table>
+    <thead><tr><th>品牌</th><th class="n">合作达人数</th><th class="n">CPM</th>
+    <th class="n">互动率</th><th class="n">友赞份额<br/>（大家电）</th><th class="n">友赞率</th>
+    <th class="n">友赞成本</th><th class="n">加热占比</th></tr></thead>
+    <tbody><tr class="row-hl">
+  <td>TCL</td>
+  <td class="n">105</td>
+  <td class="n">¥41.64</td>
+  <td class="n">2.58%</td>
+  <td class="n">17.66%</td>
+  <td class="n">0.62%</td>
+  <td class="n">¥6.70</td>
+  <td class="n">1.85%</td>
+</tr><tr class="">
+  <td>美的</td>
+  <td class="n">202</td>
+  <td class="n">¥30.00</td>
+  <td class="n">2.58%</td>
+  <td class="n">55.40%</td>
+  <td class="n">0.78%</td>
+  <td class="n">¥3.87</td>
+  <td class="n">5.58%</td>
+</tr><tr class="">
+  <td>海尔</td>
+  <td class="n">158</td>
+  <td class="n">¥63.79</td>
+  <td class="n">2.73%</td>
+  <td class="n">11.36%</td>
+  <td class="n">0.66%</td>
+  <td class="n">¥9.71</td>
+  <td class="n">0.00%</td>
+</tr><tr class="">
+  <td>格力</td>
+  <td class="n">58</td>
+  <td class="n">¥42.33</td>
+  <td class="n">2.51%</td>
+  <td class="n">6.25%</td>
+  <td class="n">0.83%</td>
+  <td class="n">¥5.09</td>
+  <td class="n">0.37%</td>
+</tr><tr class="">
+  <td>海信</td>
+  <td class="n">16</td>
+  <td class="n">¥53.71</td>
+  <td class="n">3.12%</td>
+  <td class="n">3.84%</td>
+  <td class="n">0.81%</td>
+  <td class="n">¥6.67</td>
+  <td class="n">20.02%</td>
+</tr><tr class="row-total">
+  <td>大家电整体</td><td class="n">-</td>
+  <td class="n">¥40.86</td><td class="n">2.62%</td>
+  <td class="n">100.00%</td><td class="n">0.72%</td>
+  <td class="n">¥5.69</td><td class="n">3.85%</td>
+</tr><tr class="row-xd">
+  <td>消电大盘</td><td class="n">-</td>
+  <td class="n">¥40.87</td><td class="n">2.10%</td>
+  <td class="n">-</td><td class="n">0.58%</td>
+  <td class="n">¥7.06</td><td class="n">13.34%</td>
+</tr></tbody>
+  </table>
+  <div class="dual-chart">
+    <div class="chart-box"><div class="title">CPM（千次曝光成本，越低越优）</div>
+      <svg viewBox="0 0 460 260" width="100%" style="max-width:460px;">
+<line x1="60" y1="204.0" x2="442" y2="204.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="207.0" font-size="10" text-anchor="end" fill="#6e6c68">0.00</text><line x1="60" y1="159.0" x2="442" y2="159.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="162.0" font-size="10" text-anchor="end" fill="#6e6c68">18</text><line x1="60" y1="114.0" x2="442" y2="114.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="117.0" font-size="10" text-anchor="end" fill="#6e6c68">37</text><line x1="60" y1="69.0" x2="442" y2="69.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="72.0" font-size="10" text-anchor="end" fill="#6e6c68">55</text><line x1="60" y1="24.0" x2="442" y2="24.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="27.0" font-size="10" text-anchor="end" fill="#6e6c68">73</text>
+<rect x="70.4" y="101.8" width="33.8" height="102.2" fill="#0099d4" rx="2"/><text x="87.3" y="96.8" font-size="10" text-anchor="middle" fill="#3a3a36">41.64</text><text x="87.3" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 87.3 218.0)">TCL</text><rect x="124.9" y="47.5" width="33.8" height="156.5" fill="#a09c98" rx="2"/><text x="141.9" y="42.5" font-size="10" text-anchor="middle" fill="#3a3a36">63.79</text><text x="141.9" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 141.9 218.0)">海尔</text><rect x="179.5" y="72.2" width="33.8" height="131.8" fill="#a09c98" rx="2"/><text x="196.4" y="67.2" font-size="10" text-anchor="middle" fill="#3a3a36">53.71</text><text x="196.4" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 196.4 218.0)">海信</text><rect x="234.1" y="100.1" width="33.8" height="103.9" fill="#a09c98" rx="2"/><text x="251.0" y="95.1" font-size="10" text-anchor="middle" fill="#3a3a36">42.33</text><text x="251.0" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 251.0 218.0)">格力</text><rect x="288.7" y="130.4" width="33.8" height="73.6" fill="#a09c98" rx="2"/><text x="305.6" y="125.4" font-size="10" text-anchor="middle" fill="#3a3a36">30.00</text><text x="305.6" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 305.6 218.0)">美的</text><rect x="343.2" y="103.7" width="33.8" height="100.3" fill="#5a5a55" rx="2"/><text x="360.1" y="98.7" font-size="10" text-anchor="middle" fill="#3a3a36">40.86</text><text x="360.1" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 360.1 218.0)">大家电整体</text><rect x="397.8" y="103.7" width="33.8" height="100.3" fill="#3a3a36" rx="2"/><text x="414.7" y="98.7" font-size="10" text-anchor="middle" fill="#3a3a36">40.87</text><text x="414.7" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 414.7 218.0)">消电大盘</text>
+<text x="230.0" y="14" font-size="11" font-weight="600" text-anchor="middle" fill="#3a3a36">CPM ¥</text>
+</svg>
+    </div>
+    <div class="chart-box"><div class="title">友赞成本（每个爱心赞成本，越低越优）</div>
+      <svg viewBox="0 0 460 260" width="100%" style="max-width:460px;">
+<line x1="60" y1="204.0" x2="442" y2="204.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="207.0" font-size="10" text-anchor="end" fill="#6e6c68">0.00</text><line x1="60" y1="159.0" x2="442" y2="159.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="162.0" font-size="10" text-anchor="end" fill="#6e6c68">2.79</text><line x1="60" y1="114.0" x2="442" y2="114.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="117.0" font-size="10" text-anchor="end" fill="#6e6c68">5.59</text><line x1="60" y1="69.0" x2="442" y2="69.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="72.0" font-size="10" text-anchor="end" fill="#6e6c68">8.38</text><line x1="60" y1="24.0" x2="442" y2="24.0" stroke="#e8e6e2" stroke-dasharray="2,3"/><text x="54.0" y="27.0" font-size="10" text-anchor="end" fill="#6e6c68">11</text>
+<rect x="70.4" y="96.1" width="33.8" height="107.9" fill="#0099d4" rx="2"/><text x="87.3" y="91.1" font-size="10" text-anchor="middle" fill="#3a3a36">6.70</text><text x="87.3" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 87.3 218.0)">TCL</text><rect x="124.9" y="47.5" width="33.8" height="156.5" fill="#a09c98" rx="2"/><text x="141.9" y="42.5" font-size="10" text-anchor="middle" fill="#3a3a36">9.71</text><text x="141.9" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 141.9 218.0)">海尔</text><rect x="179.5" y="96.5" width="33.8" height="107.5" fill="#a09c98" rx="2"/><text x="196.4" y="91.5" font-size="10" text-anchor="middle" fill="#3a3a36">6.67</text><text x="196.4" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 196.4 218.0)">海信</text><rect x="234.1" y="121.9" width="33.8" height="82.1" fill="#a09c98" rx="2"/><text x="251.0" y="116.9" font-size="10" text-anchor="middle" fill="#3a3a36">5.09</text><text x="251.0" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 251.0 218.0)">格力</text><rect x="288.7" y="141.7" width="33.8" height="62.3" fill="#a09c98" rx="2"/><text x="305.6" y="136.7" font-size="10" text-anchor="middle" fill="#3a3a36">3.87</text><text x="305.6" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 305.6 218.0)">美的</text><rect x="343.2" y="112.4" width="33.8" height="91.6" fill="#5a5a55" rx="2"/><text x="360.1" y="107.4" font-size="10" text-anchor="middle" fill="#3a3a36">5.69</text><text x="360.1" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 360.1 218.0)">大家电整体</text><rect x="397.8" y="90.2" width="33.8" height="113.8" fill="#3a3a36" rx="2"/><text x="414.7" y="85.2" font-size="10" text-anchor="middle" fill="#3a3a36">7.06</text><text x="414.7" y="218.0" font-size="10" text-anchor="middle" fill="#6e6c68" transform="rotate(-20 414.7 218.0)">消电大盘</text>
+<text x="230.0" y="14" font-size="11" font-weight="600" text-anchor="middle" fill="#3a3a36">友赞成本 ¥</text>
+</svg>
+    </div>
+  </div>
+  <div class="callout good">
+    <b>✅ 核心优势</b>：CPM ¥41.64、CPE ¥1.61、
+    友赞成本 ¥6.70。订单规模 119 单 / 105 位达人。
+  </div>
+  <div class="callout warn">
+    <b>⚠️ 待优化方向</b>：互动率 2.58%，
+    低于 大家电整体（2.62%）。内容共鸣度有提升空间。
+  </div>
+</div>
+
+<div class="sec">
+  <h2>② 赛道对比 — 性价比指数（美的成本 / 基线成本）</h2>
+  <table>
+    <thead><tr>
+      <th rowspan="2">赛道</th>
+      <th colspan="5" style="text-align:center;background:#e6f5fb">美的</th>
+      <th colspan="4" style="text-align:center;background:#f0efeb">基线</th>
+      <th colspan="2" style="text-align:center;background:#fff5e6">性价比指数</th>
+    </tr><tr>
+      <th class="n">达人</th><th class="n">互动率</th><th class="n">友赞率</th><th class="n">CPM</th><th class="n">友赞成本</th>
+      <th class="n">互动率</th><th class="n">友赞率</th><th class="n">CPM</th><th class="n">友赞成本</th>
+      <th class="n">CPM 性价比</th><th class="n">友赞成本性价比</th>
+    </tr></thead>
+    <tbody><tr>
+  <td><b>旅行</b></td>
+  <td class="n">3</td>
+  <td class="n">5.15%</td>
+  <td class="n">1.13%</td>
+  <td class="n">¥38.71</td>
+  <td class="n">¥3.44</td>
+  <td class="n" style="color:#888">2.99%</td>
+  <td class="n" style="color:#888">0.63%</td>
+  <td class="n" style="color:#888">¥126.58</td>
+  <td class="n" style="color:#888">¥20.21</td>
+  <td class="n n-good">✅ 0.31</td>
+  <td class="n n-good">✅ 0.17</td>
+</tr><tr>
+  <td><b>亲子</b></td>
+  <td class="n">1</td>
+  <td class="n">2.13%</td>
+  <td class="n">0.62%</td>
+  <td class="n">¥7.44</td>
+  <td class="n">¥1.20</td>
+  <td class="n" style="color:#888">0.53%</td>
+  <td class="n" style="color:#888">0.14%</td>
+  <td class="n" style="color:#888">¥20.08</td>
+  <td class="n" style="color:#888">¥14.73</td>
+  <td class="n n-good">✅ 0.37</td>
+  <td class="n n-good">✅ 0.08</td>
+</tr><tr>
+  <td><b>财经</b></td>
+  <td class="n">2</td>
+  <td class="n">1.74%</td>
+  <td class="n">0.47%</td>
+  <td class="n">¥31.02</td>
+  <td class="n">¥6.65</td>
+  <td class="n" style="color:#888">2.36%</td>
+  <td class="n" style="color:#888">0.64%</td>
+  <td class="n" style="color:#888">¥57.01</td>
+  <td class="n" style="color:#888">¥8.94</td>
+  <td class="n n-good">✅ 0.54</td>
+  <td class="n n-good">✅ 0.74</td>
+</tr><tr>
+  <td><b>宠物</b></td>
+  <td class="n">1</td>
+  <td class="n">6.10%</td>
+  <td class="n">1.11%</td>
+  <td class="n">¥15.40</td>
+  <td class="n">¥1.39</td>
+  <td class="n" style="color:#888">2.44%</td>
+  <td class="n" style="color:#888">0.59%</td>
+  <td class="n" style="color:#888">¥23.60</td>
+  <td class="n" style="color:#888">¥4.02</td>
+  <td class="n n-good">✅ 0.65</td>
+  <td class="n n-good">✅ 0.35</td>
+</tr><tr>
+  <td><b>娱乐</b></td>
+  <td class="n">12</td>
+  <td class="n">1.98%</td>
+  <td class="n">0.61%</td>
+  <td class="n">¥34.41</td>
+  <td class="n">¥5.67</td>
+  <td class="n" style="color:#888">2.83%</td>
+  <td class="n" style="color:#888">0.75%</td>
+  <td class="n" style="color:#888">¥51.43</td>
+  <td class="n" style="color:#888">¥6.83</td>
+  <td class="n n-good">✅ 0.67</td>
+  <td class="n n-good">✅ 0.83</td>
+</tr><tr>
+  <td><b>社会</b></td>
+  <td class="n">7</td>
+  <td class="n">2.88%</td>
+  <td class="n">0.62%</td>
+  <td class="n">¥40.51</td>
+  <td class="n">¥6.52</td>
+  <td class="n" style="color:#888">2.73%</td>
+  <td class="n" style="color:#888">0.72%</td>
+  <td class="n" style="color:#888">¥58.04</td>
+  <td class="n" style="color:#888">¥8.07</td>
+  <td class="n n-good">✅ 0.70</td>
+  <td class="n n-good">✅ 0.81</td>
+</tr><tr>
+  <td><b>科技</b></td>
+  <td class="n">28</td>
+  <td class="n">2.66%</td>
+  <td class="n">0.71%</td>
+  <td class="n">¥36.47</td>
+  <td class="n">¥5.15</td>
+  <td class="n" style="color:#888">2.44%</td>
+  <td class="n" style="color:#888">0.71%</td>
+  <td class="n" style="color:#888">¥47.80</td>
+  <td class="n" style="color:#888">¥6.76</td>
+  <td class="n n-good">✅ 0.76</td>
+  <td class="n n-good">✅ 0.76</td>
+</tr><tr>
+  <td><b>影视综</b></td>
+  <td class="n">3</td>
+  <td class="n">3.76%</td>
+  <td class="n">1.06%</td>
+  <td class="n">¥24.19</td>
+  <td class="n">¥2.29</td>
+  <td class="n" style="color:#888">1.90%</td>
+  <td class="n" style="color:#888">0.60%</td>
+  <td class="n" style="color:#888">¥31.39</td>
+  <td class="n" style="color:#888">¥5.23</td>
+  <td class="n n-good">✅ 0.77</td>
+  <td class="n n-good">✅ 0.44</td>
+</tr><tr>
+  <td><b>生活</b></td>
+  <td class="n">17</td>
+  <td class="n">2.39%</td>
+  <td class="n">0.45%</td>
+  <td class="n">¥30.74</td>
+  <td class="n">¥6.78</td>
+  <td class="n" style="color:#888">2.31%</td>
+  <td class="n" style="color:#888">0.65%</td>
+  <td class="n" style="color:#888">¥35.04</td>
+  <td class="n" style="color:#888">¥5.38</td>
+  <td class="n n-good">✅ 0.88</td>
+  <td class="n n-bad">⚠️ 1.26</td>
+</tr><tr>
+  <td><b>时尚</b></td>
+  <td class="n">4</td>
+  <td class="n">2.97%</td>
+  <td class="n">0.53%</td>
+  <td class="n">¥49.68</td>
+  <td class="n">¥9.33</td>
+  <td class="n" style="color:#888">2.44%</td>
+  <td class="n" style="color:#888">0.56%</td>
+  <td class="n" style="color:#888">¥55.89</td>
+  <td class="n" style="color:#888">¥10.07</td>
+  <td class="n n-good">✅ 0.89</td>
+  <td class="n n-warn">0.93</td>
+</tr><tr>
+  <td><b>汽车</b></td>
+  <td class="n">7</td>
+  <td class="n">3.15%</td>
+  <td class="n">0.79%</td>
+  <td class="n">¥78.83</td>
+  <td class="n">¥9.92</td>
+  <td class="n" style="color:#888">2.08%</td>
+  <td class="n" style="color:#888">0.56%</td>
+  <td class="n" style="color:#888">¥79.57</td>
+  <td class="n" style="color:#888">¥14.19</td>
+  <td class="n n-warn">0.99</td>
+  <td class="n n-good">✅ 0.70</td>
+</tr><tr>
+  <td><b>职场</b></td>
+  <td class="n">7</td>
+  <td class="n">1.60%</td>
+  <td class="n">0.42%</td>
+  <td class="n">¥55.51</td>
+  <td class="n">¥13.29</td>
+  <td class="n" style="color:#888">2.98%</td>
+  <td class="n" style="color:#888">0.78%</td>
+  <td class="n" style="color:#888">¥55.38</td>
+  <td class="n" style="color:#888">¥7.10</td>
+  <td class="n n-warn">1.00</td>
+  <td class="n n-bad">⚠️ 1.87</td>
+</tr><tr>
+  <td><b>体育</b></td>
+  <td class="n">7</td>
+  <td class="n">2.62%</td>
+  <td class="n">0.84%</td>
+  <td class="n">¥101.57</td>
+  <td class="n">¥12.11</td>
+  <td class="n" style="color:#888">2.54%</td>
+  <td class="n" style="color:#888">0.77%</td>
+  <td class="n" style="color:#888">¥72.97</td>
+  <td class="n" style="color:#888">¥9.48</td>
+  <td class="n n-bad">⚠️ 1.39</td>
+  <td class="n n-bad">⚠️ 1.28</td>
+</tr><tr>
+  <td><b>人文艺术</b></td>
+  <td class="n">3</td>
+  <td class="n">1.23%</td>
+  <td class="n">0.17%</td>
+  <td class="n">¥154.42</td>
+  <td class="n">¥89.06</td>
+  <td class="n" style="color:#888">4.03%</td>
+  <td class="n" style="color:#888">1.04%</td>
+  <td class="n" style="color:#888">¥65.37</td>
+  <td class="n" style="color:#888">¥6.26</td>
+  <td class="n n-bad">⚠️ 2.36</td>
+  <td class="n n-bad">⚠️ 14.22</td>
+</tr><tr>
+  <td><b>短剧</b></td>
+  <td class="n">1</td>
+  <td class="n">4.02%</td>
+  <td class="n">0.92%</td>
+  <td class="n">¥126.26</td>
+  <td class="n">¥13.71</td>
+  <td class="n" style="color:#888">0.58%</td>
+  <td class="n" style="color:#888">0.14%</td>
+  <td class="n" style="color:#888">¥15.21</td>
+  <td class="n" style="color:#888">¥10.97</td>
+  <td class="n n-bad">⚠️ 8.30</td>
+  <td class="n n-bad">⚠️ 1.25</td>
+</tr><tr>
+  <td><b>搞笑</b></td>
+  <td class="n">1</td>
+  <td class="n">4.05%</td>
+  <td class="n">0.79%</td>
+  <td class="n">¥205.18</td>
+  <td class="n">¥25.93</td>
+  <td class="n" style="color:#888">2.10%</td>
+  <td class="n" style="color:#888">0.57%</td>
+  <td class="n" style="color:#888">¥21.93</td>
+  <td class="n" style="color:#888">¥3.88</td>
+  <td class="n n-bad">⚠️ 9.36</td>
+  <td class="n n-bad">⚠️ 6.68</td>
+</tr><tr>
+  <td><b>剧情</b></td>
+  <td class="n">1</td>
+  <td class="n">7.58%</td>
+  <td class="n">0.63%</td>
+  <td class="n">¥1,098.51</td>
+  <td class="n">¥175.00</td>
+  <td class="n" style="color:#888">0.77%</td>
+  <td class="n" style="color:#888">0.24%</td>
+  <td class="n" style="color:#888">¥15.59</td>
+  <td class="n" style="color:#888">¥6.51</td>
+  <td class="n n-bad">⚠️ 70.45</td>
+  <td class="n n-bad">⚠️ 26.87</td>
+</tr></tbody>
+  </table>
+  <div class="callout good"><b>✅ 高性价比赛道</b>：旅行、亲子、财经、宠物、娱乐、社会、科技、影视综（CPM 与 友赞成本性价比均 &lt;0.9，建议加大预算倾斜）</div>
+  <div class="callout warn"><b>⚠️ 需优化赛道</b>：生活、职场、体育、人文艺术、短剧、搞笑、剧情（CPM 或 友赞成本性价比 &gt;1.1，建议复盘选号策略）</div>
+  <div class="callout info"><b>性价比指数</b>：美的成本 ÷ 基线同赛道成本。&lt;0.9 优、0.9~1.1 平、&gt;1.1 差。</div>
+</div>
+
+<div class="sec">
+  <h2>③ 爆款象限 — A 象限（爆款种子）+ B 象限（双爆款）双引擎</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+    📌 中位数定义象限：x=播放量 中位数 515,538｜y=爱心赞 中位数 3,909（基于 117 条有播放有点赞订单）
+  </p>
+  
+<div class="quad-cards">
+  <div class="quad-card A">
+    <div class="qn">A 高互动低播放</div>
+    <div class="qc">11</div>
+    <div class="qd">爆款种子｜9.4%</div>
+  </div>
+  <div class="quad-card B">
+    <div class="qn">B 双高（双爆款）</div>
+    <div class="qc">47</div>
+    <div class="qd">高播放高互动｜40.2%</div>
+  </div>
+  <div class="quad-card">
+    <div class="qn">C 双低</div>
+    <div class="qc">48</div>
+    <div class="qd">低播放低互动｜41.0%</div>
+  </div>
+  <div class="quad-card">
+    <div class="qn">D 流量空转</div>
+    <div class="qc">11</div>
+    <div class="qd">高播放低互动｜9.4%</div>
+  </div>
+</div>
+  <div class="scatter-wrap">
+    <svg viewBox="0 0 1180 560" width="100%" style="display:block;width:100%;height:auto;">
+<rect x="70" y="30" width="799.1" height="119.8" fill="#e6f5fb" opacity="0.5"/><rect x="869.1" y="30" width="270.9" height="119.8" fill="#eaf6ee" opacity="0.5"/><rect x="70" y="149.8" width="799.1" height="350.2" fill="#fafaf7"/><rect x="869.1" y="149.8" width="270.9" height="350.2" fill="#fff5e6" opacity="0.5"/>
+<line x1="118.0" y1="30" x2="118.0" y2="500" stroke="#eee" stroke-dasharray="2,3"/><text x="118.0" y="514" font-size="10" text-anchor="middle" fill="#6e6c68">1k</text><line x1="394.9" y1="30" x2="394.9" y2="500" stroke="#eee" stroke-dasharray="2,3"/><text x="394.9" y="514" font-size="10" text-anchor="middle" fill="#6e6c68">10k</text><line x1="671.9" y1="30" x2="671.9" y2="500" stroke="#eee" stroke-dasharray="2,3"/><text x="671.9" y="514" font-size="10" text-anchor="middle" fill="#6e6c68">100k</text><line x1="948.8" y1="30" x2="948.8" y2="500" stroke="#eee" stroke-dasharray="2,3"/><text x="948.8" y="514" font-size="10" text-anchor="middle" fill="#6e6c68">1M</text><line x1="70" y1="383.3" x2="1140" y2="383.3" stroke="#eee" stroke-dasharray="2,3"/><text x="64" y="386.3" font-size="10" text-anchor="end" fill="#6e6c68">100</text><line x1="70" y1="236.6" x2="1140" y2="236.6" stroke="#eee" stroke-dasharray="2,3"/><text x="64" y="239.6" font-size="10" text-anchor="end" fill="#6e6c68">1k</text><line x1="70" y1="89.9" x2="1140" y2="89.9" stroke="#eee" stroke-dasharray="2,3"/><text x="64" y="92.9" font-size="10" text-anchor="end" fill="#6e6c68">10k</text>
+<line x1="869.1" y1="30" x2="869.1" y2="500" stroke="#0099d4" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.7"/><line x1="70" y1="149.8" x2="1140" y2="149.8" stroke="#0099d4" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.7"/>
+<circle cx="878.5" cy="162.0" r="3" fill="#999" opacity="0.35"/><circle cx="918.2" cy="160.1" r="3" fill="#999" opacity="0.35"/><circle cx="1120.3" cy="54.7" r="3" fill="#999" opacity="0.35"/><circle cx="796.0" cy="192.1" r="3" fill="#999" opacity="0.35"/><circle cx="701.1" cy="328.6" r="3" fill="#999" opacity="0.35"/><circle cx="1126.5" cy="67.4" r="3" fill="#999" opacity="0.35"/><circle cx="1045.1" cy="108.6" r="3" fill="#999" opacity="0.35"/><circle cx="936.0" cy="108.1" r="3" fill="#999" opacity="0.35"/><circle cx="1023.3" cy="133.0" r="3" fill="#999" opacity="0.35"/><circle cx="961.6" cy="157.6" r="3" fill="#999" opacity="0.35"/><circle cx="977.7" cy="130.0" r="3" fill="#999" opacity="0.35"/><circle cx="995.8" cy="143.8" r="3" fill="#999" opacity="0.35"/><circle cx="999.6" cy="145.7" r="3" fill="#999" opacity="0.35"/><circle cx="1026.3" cy="116.6" r="3" fill="#999" opacity="0.35"/><circle cx="820.3" cy="164.9" r="3" fill="#999" opacity="0.35"/><circle cx="808.3" cy="187.8" r="3" fill="#999" opacity="0.35"/><circle cx="830.3" cy="190.9" r="3" fill="#999" opacity="0.35"/><circle cx="709.5" cy="295.1" r="3" fill="#999" opacity="0.35"/><circle cx="741.1" cy="196.3" r="3" fill="#999" opacity="0.35"/><circle cx="754.3" cy="186.9" r="3" fill="#999" opacity="0.35"/><circle cx="854.2" cy="185.8" r="3" fill="#999" opacity="0.35"/><circle cx="932.5" cy="156.0" r="3" fill="#999" opacity="0.35"/><circle cx="655.6" cy="250.5" r="3" fill="#999" opacity="0.35"/><circle cx="992.3" cy="107.6" r="3" fill="#999" opacity="0.35"/><circle cx="1000.6" cy="122.6" r="3" fill="#999" opacity="0.35"/><circle cx="713.5" cy="239.1" r="3" fill="#999" opacity="0.35"/><circle cx="716.6" cy="190.0" r="3" fill="#999" opacity="0.35"/><circle cx="579.7" cy="333.6" r="3" fill="#999" opacity="0.35"/><circle cx="638.9" cy="317.0" r="3" fill="#999" opacity="0.35"/><circle cx="739.0" cy="238.4" r="3" fill="#999" opacity="0.35"/><circle cx="829.7" cy="267.3" r="3" fill="#999" opacity="0.35"/><circle cx="932.6" cy="166.6" r="3" fill="#999" opacity="0.35"/><circle cx="614.7" cy="249.1" r="3" fill="#999" opacity="0.35"/><circle cx="466.7" cy="374.9" r="3" fill="#999" opacity="0.35"/><circle cx="879.7" cy="136.8" r="3" fill="#999" opacity="0.35"/><circle cx="718.7" cy="252.0" r="3" fill="#999" opacity="0.35"/><circle cx="797.0" cy="172.2" r="3" fill="#999" opacity="0.35"/><circle cx="688.3" cy="226.3" r="3" fill="#999" opacity="0.35"/><circle cx="689.0" cy="215.4" r="3" fill="#999" opacity="0.35"/><circle cx="969.4" cy="82.7" r="3" fill="#999" opacity="0.35"/><circle cx="931.2" cy="113.7" r="3" fill="#999" opacity="0.35"/><circle cx="1195.8" cy="61.4" r="3" fill="#999" opacity="0.35"/><circle cx="875.9" cy="158.7" r="3" fill="#999" opacity="0.35"/><circle cx="999.7" cy="125.4" r="3" fill="#999" opacity="0.35"/><circle cx="725.6" cy="227.5" r="3" fill="#999" opacity="0.35"/><circle cx="70.0" cy="500.0" r="3" fill="#999" opacity="0.35"/><circle cx="989.9" cy="69.6" r="3" fill="#999" opacity="0.35"/><circle cx="955.5" cy="123.6" r="3" fill="#999" opacity="0.35"/><circle cx="809.9" cy="210.9" r="3" fill="#999" opacity="0.35"/><circle cx="870.1" cy="227.5" r="3" fill="#999" opacity="0.35"/><circle cx="893.2" cy="131.1" r="3" fill="#999" opacity="0.35"/><circle cx="812.0" cy="200.8" r="3" fill="#999" opacity="0.35"/><circle cx="869.1" cy="149.8" r="3" fill="#999" opacity="0.35"/><circle cx="1114.1" cy="33.1" r="3" fill="#999" opacity="0.35"/><circle cx="1023.7" cy="63.3" r="3" fill="#999" opacity="0.35"/><circle cx="868.5" cy="157.2" r="3" fill="#999" opacity="0.35"/><circle cx="869.1" cy="174.3" r="3" fill="#999" opacity="0.35"/><circle cx="827.2" cy="187.7" r="3" fill="#999" opacity="0.35"/><circle cx="817.3" cy="171.2" r="3" fill="#999" opacity="0.35"/><circle cx="812.6" cy="189.7" r="3" fill="#999" opacity="0.35"/><circle cx="673.9" cy="279.0" r="3" fill="#999" opacity="0.35"/><circle cx="737.6" cy="217.9" r="3" fill="#999" opacity="0.35"/><circle cx="498.3" cy="318.1" r="3" fill="#999" opacity="0.35"/><circle cx="735.9" cy="218.6" r="3" fill="#999" opacity="0.35"/><circle cx="734.1" cy="205.2" r="3" fill="#999" opacity="0.35"/><circle cx="731.7" cy="207.9" r="3" fill="#999" opacity="0.35"/><circle cx="691.1" cy="226.7" r="3" fill="#999" opacity="0.35"/><circle cx="734.7" cy="213.7" r="3" fill="#999" opacity="0.35"/><circle cx="1134.1" cy="50.8" r="3" fill="#999" opacity="0.35"/><circle cx="826.5" cy="164.3" r="3" fill="#999" opacity="0.35"/><circle cx="783.3" cy="176.8" r="3" fill="#999" opacity="0.35"/><circle cx="931.9" cy="213.8" r="3" fill="#999" opacity="0.35"/><circle cx="952.3" cy="128.8" r="3" fill="#999" opacity="0.35"/><circle cx="70.0" cy="500.0" r="3" fill="#999" opacity="0.35"/><circle cx="910.4" cy="155.9" r="3" fill="#999" opacity="0.35"/><circle cx="911.7" cy="173.3" r="3" fill="#999" opacity="0.35"/><circle cx="674.9" cy="217.2" r="3" fill="#999" opacity="0.35"/><circle cx="1092.0" cy="59.1" r="3" fill="#999" opacity="0.35"/><circle cx="930.9" cy="137.4" r="3" fill="#999" opacity="0.35"/><circle cx="886.8" cy="153.9" r="3" fill="#999" opacity="0.35"/><circle cx="759.1" cy="166.3" r="3" fill="#999" opacity="0.35"/><circle cx="863.5" cy="237.6" r="3" fill="#999" opacity="0.35"/><circle cx="611.1" cy="236.0" r="3" fill="#999" opacity="0.35"/><circle cx="1016.8" cy="89.2" r="3" fill="#999" opacity="0.35"/><circle cx="848.4" cy="269.1" r="3" fill="#999" opacity="0.35"/><circle cx="1107.8" cy="85.8" r="3" fill="#999" opacity="0.35"/><circle cx="1110.1" cy="10.9" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="1051.5" cy="53.0" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="994.7" cy="59.0" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="975.2" cy="81.1" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="970.7" cy="94.1" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="968.8" cy="87.8" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="965.0" cy="54.4" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="950.7" cy="105.0" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="943.3" cy="100.8" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="941.3" cy="88.8" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="935.0" cy="77.8" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="929.0" cy="92.7" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="928.7" cy="87.7" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="917.0" cy="121.7" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="897.2" cy="109.7" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="892.3" cy="112.9" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="886.8" cy="119.4" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="886.0" cy="82.2" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="884.8" cy="88.6" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="873.4" cy="97.4" r="6" fill="#2f8f5f" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="866.8" cy="147.5" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="865.9" cy="131.9" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="865.9" cy="143.4" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="858.8" cy="129.9" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="858.0" cy="148.9" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="848.9" cy="136.0" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="843.7" cy="139.1" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="817.8" cy="146.0" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="805.5" cy="140.1" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="788.9" cy="130.0" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/><circle cx="769.3" cy="148.4" r="6" fill="#0099d4" opacity="0.95" stroke="#fff" stroke-width="1"/>
+<text x="80" y="48" font-size="12" font-weight="700" fill="#0078a8">A 高互动低播放（爆款种子）</text><text x="1130" y="48" font-size="12" font-weight="700" fill="#1f5a3a" text-anchor="end">B 双高（双爆款）</text><text x="80" y="492" font-size="11" fill="#6e6c68">C 双低</text><text x="1130" y="492" font-size="12" font-weight="700" fill="#3a3a36" text-anchor="end">D 高播放低互动（流量空转）</text>
+<text x="605.0" y="552" font-size="11" text-anchor="middle" fill="#3a3a36">播放量（log）</text><text x="14" y="265.0" font-size="11" text-anchor="middle" fill="#3a3a36" transform="rotate(-90 14 265.0)">爱心赞数（log）</text>
+<text x="1118.1" y="40.0" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">花椒财经</text><text x="1059.5" y="51.0" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">瑞哥英语RyanCh</text><text x="1002.7" y="69.0" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">吉米猫wo</text><text x="983.2" y="91.1" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">科技宝</text><text x="978.7" y="104.1" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">欧叔洞见</text><text x="976.8" y="85.8" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">TOP科技圈</text><text x="973.0" y="52.4" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">科技新洞察</text><text x="950.7" y="121.0" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">一起看电影吗</text><text x="951.3" y="98.8" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">九派新闻</text><text x="949.3" y="86.8" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">前沿科技范</text><text x="935.0" y="65.8" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">冬冬和37</text><text x="937.0" y="90.7" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">科技新洞察</text><text x="936.7" y="85.7" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">暴哥说</text><text x="917.0" y="137.7" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">粤知一二</text><text x="889.2" y="107.7" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="end" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">大佬说</text><text x="884.3" y="122.9" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="end" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">科技日爆</text><text x="894.8" y="117.4" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">黄叔侃科技</text><text x="894.0" y="80.2" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">九派新闻</text><text x="892.8" y="86.6" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">未来科技洞察</text><text x="881.4" y="95.4" font-size="10" font-weight="600" fill="#2f8f5f" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">梦璐没在怕</text><text x="874.8" y="157.5" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">极目新闻</text><text x="873.9" y="129.9" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">99种人生</text><text x="873.9" y="141.4" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">明星娱乐最前线</text><text x="866.8" y="127.9" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">BOSS电影</text><text x="866.0" y="146.9" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">她刊</text><text x="856.9" y="134.0" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">科技日爆</text><text x="851.7" y="137.1" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">科技纪元v</text><text x="825.8" y="144.0" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">SocialBeta</text><text x="805.5" y="156.1" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">青年科技Pro</text><text x="780.9" y="128.0" font-size="10" font-weight="600" fill="#0099d4" text-anchor="end" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">深八影视</text><text x="777.3" y="146.4" font-size="10" font-weight="600" fill="#0099d4" text-anchor="start" style="paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;">杰明科技课堂</text>
+</svg>
+    <div style="font-size:11px;color:#888;text-align:center;margin-top:8px">
+      🔵 品牌色大点 = A 象限互动率 Top｜🟢 绿大点 = B 双高 Top20｜虚线 = 中位数
+    </div>
+  </div>
+
+  <h3>🎯 爆款内容 4 大方向 — 代表性案例与可复用结论</h3>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+    📌 先看内容总结：从 <b>B 双高象限</b>（双爆款达人池）按 4 类内容方向各挑 1 名代表达人，呈现"达人 / 合作效果 / 内容文案 / 内容亮点"4 个维度，作为下批选号 brief 的直接复用模板；下方再分别展开各象限明细表。
+  </p>
+  <table class="case-table">
+    <colgroup><col style="width:13%"/><col style="width:21.75%"/><col style="width:21.75%"/><col style="width:21.75%"/><col style="width:21.75%"/></colgroup>
+    <thead>
+      <tr style="background:#0099d4;color:#fff">
+        <th>爆款内容分类</th>
+        <th style="background:#0099d4;color:#fff">国际赛事造高端心智</th><th style="background:#0099d4;color:#fff">技术优势专业背书</th><th style="background:#0099d4;color:#fff">萌宠治愈情感蓄水</th><th style="background:#0099d4;color:#fff">行业资讯背书出量</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><b>代表达人</b></td><td>九派新闻</td><td>未来科技洞察</td><td>吉米猫wo</td><td>一起看电影吗</td></tr>
+      <tr><td><b>合作效果</b></td><td>播放量 593,062；爱心赞 11,287<br/>CPM <b style="color:#0099d4">¥53.11</b></td><td>播放量 587,060；爱心赞 10,215<br/>CPM <b style="color:#0099d4">¥79.88</b></td><td>播放量 1,463,892；爱心赞 16,254<br/>CPM <b style="color:#0099d4">¥15.40</b></td><td>播放量 1,016,104；爱心赞 7,888<br/>CPM <b style="color:#0099d4">¥18.08</b></td></tr>
+      <tr><td><b>内容文案</b></td><td style="font-size:12px;line-height:1.5;color:#555">近日，#谷爱凌 米兰冬奥会一金二银收官，赛后#谷爱凌称想挑战女子历史第一#TCL…</td><td style="font-size:12px;line-height:1.5;color:#555">2026年TCL电视春季新品发布会，开启SQD-Mini LED电视的“普及元年…</td><td style="font-size:12px;line-height:1.5;color:#555">一不注意孩子就把猫咪当妈妈了～ 真闹心～#TCL超级筒洗衣机  #TCL洗衣机 …</td><td style="font-size:12px;line-height:1.5;color:#555">申奥导演继《孤注一掷》后，再度携手TCL，带来现实主义力作《用武之地》！作为电影…</td></tr>
+      <tr><td><b>内容亮点</b></td><td style="font-size:12px;line-height:1.6;padding:10px">借势 CES/IFA 国际赛事的&quot;全球首发&quot;标签，把品牌与&quot;中国科技走出去&quot;叙事强绑定，建立高端权威心智</td><td style="font-size:12px;line-height:1.6;padding:10px">输出&quot;技术原理 + 实测数据&quot;的深度内容，把产品优势转化为可被大众理解的专业信任</td><td style="font-size:12px;line-height:1.6;padding:10px">借萌宠/治愈系叙事绑定情感节点（春节/七夕/中秋），做品牌温度蓄水池，避免硬广稀释好感度</td><td style="font-size:12px;line-height:1.6;padding:10px">依托行业垂类资讯型号矩阵做基本盘曝光，用第三方视角承接品牌叙事，强化&quot;被行业讨论&quot;的存在感</td></tr>
+    </tbody>
+  </table>
+
+  <h3>🚀 B 双高象限 — 共 47 条，TOP 20 达人列表</h3>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+    既高播放又高爱心赞的"全能选手"，按互动率排序的 Top 20 达人，可作为<b>续约 / 加大预算的核心名单</b>。内容主题分布：品牌IP宣推 18条 / 萌宠/治愈 1条 / 其他 1条；主体分布：辛克莱尔(北京)信息…(8条)、代理(5条)、TCL实业控股股份有…(3条)；平均播放 1,112,854（远超中位数）、平均互动率 4.92%、平均 CPM ¥46.94。
+  </p>
+  <div class="kol-list"><span class="kol-chip">九派新闻</span><span class="kol-chip">梦璐没在怕</span><span class="kol-chip">冬冬和37</span><span class="kol-chip">瑞哥英语RyanChen</span><span class="kol-chip">未来科技洞察</span><span class="kol-chip">吉米猫wo</span><span class="kol-chip">花椒财经</span><span class="kol-chip">科技新洞察</span><span class="kol-chip">暴哥说</span><span class="kol-chip">科技宝</span><span class="kol-chip">TOP科技圈</span><span class="kol-chip">大佬说</span><span class="kol-chip">粤知一二</span><span class="kol-chip">前沿科技范</span><span class="kol-chip">九派新闻</span><span class="kol-chip">科技日爆</span><span class="kol-chip">科技新洞察</span><span class="kol-chip">黄叔侃科技</span><span class="kol-chip">欧叔洞见</span><span class="kol-chip">一起看电影吗</span></div>
+  <table>
+    <thead><tr><th class="n">#</th><th>达人</th><th>主体</th><th class="n">播放</th><th class="n">爱心赞</th>
+    <th class="n">互动率</th><th class="n">CPM</th><th>视频</th><th>内容摘要</th></tr></thead>
+    <tbody><tr>
+  <td class="n">1</td>
+  <td>九派新闻</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">593,062</td>
+  <td class="n">11,287</td>
+  <td class="n">7.22%</td>
+  <td class="n">¥53.11</td>
+  <td><span class="vid-link" data-url="85469970020" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">近日，#谷爱凌 米兰冬奥会一金二银收官，赛后#谷…</td>
+</tr><tr>
+  <td class="n">2</td>
+  <td>梦璐没在怕</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">533,960</td>
+  <td class="n">8,892</td>
+  <td class="n">7.21%</td>
+  <td class="n">¥41.30</td>
+  <td><span class="vid-link" data-url="88398653393" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">现在科技已经发展到这么恐怖的程度了吗？#AI#科…</td>
+</tr><tr>
+  <td class="n">3</td>
+  <td>冬冬和37</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">891,681</td>
+  <td class="n">12,107</td>
+  <td class="n">7.20%</td>
+  <td class="n">¥82.43</td>
+  <td><span class="vid-link" data-url="88576120361" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">现在外面的世界已经发展成这样了吗#AWE2026…</td>
+</tr><tr>
+  <td class="n">4</td>
+  <td>瑞哥英语RyanChen</td>
+  <td>合肥种草羊文化传媒有限公司</td>
+  <td class="n">2,348,042</td>
+  <td class="n">17,855</td>
+  <td class="n">6.39%</td>
+  <td class="n">¥44.72</td>
+  <td><span class="vid-link" data-url="75690509027" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">在CES展体验中国科技产品 #美国生活 #英语口…</td>
+</tr><tr>
+  <td class="n">5</td>
+  <td>未来科技洞察</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">587,060</td>
+  <td class="n">10,215</td>
+  <td class="n">6.27%</td>
+  <td class="n">¥79.88</td>
+  <td><span class="vid-link" data-url="89145676332" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">2026年TCL电视春季新品发布会，开启SQD-…</td>
+</tr><tr>
+  <td class="n">6</td>
+  <td>吉米猫wo</td>
+  <td>TCL家用电器(合肥)有限公司</td>
+  <td class="n">1,463,892</td>
+  <td class="n">16,254</td>
+  <td class="n">6.10%</td>
+  <td class="n">¥15.40</td>
+  <td><span class="vid-link" data-url="90415624440" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">一不注意孩子就把猫咪当妈妈了～ 真闹心～#TCL…</td>
+</tr><tr>
+  <td class="n">7</td>
+  <td>花椒财经</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">3,823,892</td>
+  <td class="n">34,567</td>
+  <td class="n">5.98%</td>
+  <td class="n">¥32.95</td>
+  <td><span class="vid-link" data-url="91468978839" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">张雪，一战封神！与他一起登顶的，是中国制造的再次…</td>
+</tr><tr>
+  <td class="n">8</td>
+  <td>科技新洞察</td>
+  <td>深圳市影创谷传媒有限公司</td>
+  <td class="n">1,144,435</td>
+  <td class="n">17,458</td>
+  <td class="n">5.38%</td>
+  <td class="n">¥39.86</td>
+  <td><span class="vid-link" data-url="85200323857" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">技术标准之战：TCL如何用一块屏，诠释冬奥会的“…</td>
+</tr><tr>
+  <td class="n">9</td>
+  <td>暴哥说</td>
+  <td>深圳市影创谷传媒有限公司</td>
+  <td class="n">846,153</td>
+  <td class="n">10,355</td>
+  <td class="n">4.84%</td>
+  <td class="n">¥43.75</td>
+  <td><span class="vid-link" data-url="85200323770" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">中国科技高光时刻!SQD-Mini LED显示技…</td>
+</tr><tr>
+  <td class="n">10</td>
+  <td>科技宝</td>
+  <td>TCL科技集团股份有限公司</td>
+  <td class="n">1,245,452</td>
+  <td class="n">11,492</td>
+  <td class="n">4.56%</td>
+  <td class="n">¥15.18</td>
+  <td><span class="vid-link" data-url="78235269949" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">中国最拒绝“内卷”的广东省，诞生了众多的出海企业…</td>
+</tr><tr>
+  <td class="n">11</td>
+  <td>TOP科技圈</td>
+  <td>TCL科技集团股份有限公司</td>
+  <td class="n">1,180,556</td>
+  <td class="n">10,334</td>
+  <td class="n">4.30%</td>
+  <td class="n">¥16.01</td>
+  <td><span class="vid-link" data-url="78235270617" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">中国的智能眼镜，在美国“科技春晚”CES展惊艳亮…</td>
+</tr><tr>
+  <td class="n">12</td>
+  <td>大佬说</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">650,811</td>
+  <td class="n">7,327</td>
+  <td class="n">4.16%</td>
+  <td class="n">¥38.72</td>
+  <td><span class="vid-link" data-url="86052994113" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">米兰冬奥会夺冠后谷爱凌首次亮相，谷爱凌对话杨澜：…</td>
+</tr><tr>
+  <td class="n">13</td>
+  <td>粤知一二</td>
+  <td>TCL家用电器(合肥)有限公司</td>
+  <td class="n">767,626</td>
+  <td class="n">6,074</td>
+  <td class="n">4.05%</td>
+  <td class="n">¥205.18</td>
+  <td><span class="vid-link" data-url="90602141760" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">你家也这样吗？#TCL超级筒洗衣机 #TCL洗衣…</td>
+</tr><tr>
+  <td class="n">14</td>
+  <td>前沿科技范</td>
+  <td>深圳市影创谷传媒有限公司</td>
+  <td class="n">939,097</td>
+  <td class="n">10,176</td>
+  <td class="n">3.98%</td>
+  <td class="n">¥29.15</td>
+  <td><span class="vid-link" data-url="85200323850" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">米兰冬奥会官方转播终端，第一次由中国品牌担纲。但…</td>
+</tr><tr>
+  <td class="n">15</td>
+  <td>九派新闻</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">955,305</td>
+  <td class="n">8,437</td>
+  <td class="n">3.91%</td>
+  <td class="n">¥32.97</td>
+  <td><span class="vid-link" data-url="80068971455" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">1月19日，#谷爱凌双奥火炬手 双马尾造型参与米…</td>
+</tr><tr>
+  <td class="n">16</td>
+  <td>科技日爆</td>
+  <td>深圳市影创谷传媒有限公司</td>
+  <td class="n">624,834</td>
+  <td class="n">6,971</td>
+  <td class="n">3.90%</td>
+  <td class="n">¥35.29</td>
+  <td><span class="vid-link" data-url="85575954238" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">中国电视闯进米兰IBC！TCL SQD-Mini…</td>
+</tr><tr>
+  <td class="n">17</td>
+  <td>科技新洞察</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">848,204</td>
+  <td class="n">9,573</td>
+  <td class="n">3.62%</td>
+  <td class="n">¥37.14</td>
+  <td><span class="vid-link" data-url="83635052171" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">封神出圈！“奥运一年级新生”零失误亮相米兰冬奥#…</td>
+</tr><tr>
+  <td class="n">18</td>
+  <td>黄叔侃科技</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">597,180</td>
+  <td class="n">6,295</td>
+  <td class="n">3.13%</td>
+  <td class="n">¥56.26</td>
+  <td><span class="vid-link" data-url="79987270218" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">年度机皇亮相CES 2026成为全场焦点TCL …</td>
+</tr><tr>
+  <td class="n">19</td>
+  <td>欧叔洞见</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">1,199,729</td>
+  <td class="n">9,373</td>
+  <td class="n">3.10%</td>
+  <td class="n">¥21.44</td>
+  <td><span class="vid-link" data-url="81642470100" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">2026年，智能眼镜正式纳入“国补”范围。移动、…</td>
+</tr><tr>
+  <td class="n">20</td>
+  <td>一起看电影吗</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">1,016,104</td>
+  <td class="n">7,888</td>
+  <td class="n">3.08%</td>
+  <td class="n">¥18.08</td>
+  <td><span class="vid-link" data-url="76005407783" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">申奥导演继《孤注一掷》后，再度携手TCL，带来现…</td>
+</tr></tbody>
+  </table>
+
+  <h3>🌱 A 第二象限（高互动低播放）— 爱心赞 TOP 10 达人列表</h3>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+    互动率高但播放未跑出的"爆款种子"，按爱心赞绝对值排序 Top 10 — <b>这批是加热推荐池的最优候选</b>，内容已被验证有共鸣力，仅缺流量助推。<br/>
+    A 象限 Top15 整体平均互动率 <b>4.45%</b>，远超大家电整体（2.62%）；标签矩阵：#TCL×5 / #敢为不凡×3 / #用武之地×2 / #京东家电家居宝藏IP×2 / #谷爱凌双奥火炬手×2 / #谷爱凌TCL全球品牌代言人×2 / #TCL传递不凡×2。
+  </p>
+  <table>
+    <thead><tr><th class="n">#</th><th>达人</th><th>主体</th><th class="n">播放</th><th class="n">爱心赞</th>
+    <th class="n">互动率</th><th class="n">CPM</th><th class="n">友赞成本</th><th>视频</th><th>内容摘要</th></tr></thead>
+    <tbody><tr>
+  <td class="n">1</td>
+  <td>BOSS电影</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">473,120</td>
+  <td class="n">5,340</td>
+  <td class="n">3.58%</td>
+  <td class="n">¥23.75</td>
+  <td class="n">¥2.10</td>
+  <td><span class="vid-link" data-url="76388663559" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">电影里是千里归家的惊险自救，电影外是40年破局出…</td>
+</tr><tr>
+  <td class="n">2</td>
+  <td>深八影视</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">264,564</td>
+  <td class="n">5,333</td>
+  <td class="n">6.65%</td>
+  <td class="n">¥48.42</td>
+  <td class="n">¥2.40</td>
+  <td><span class="vid-link" data-url="76388333112" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">年末压轴！申奥《用武之地》震撼上映，以平凡，赴不…</td>
+</tr><tr>
+  <td class="n">3</td>
+  <td>99种人生</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">501,789</td>
+  <td class="n">5,171</td>
+  <td class="n">2.77%</td>
+  <td class="n">¥83.70</td>
+  <td class="n">¥8.12</td>
+  <td><span class="vid-link" data-url="76399924494" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">中国电影的未来，藏在青年导演的敢为不凡里。TCL…</td>
+</tr><tr>
+  <td class="n">4</td>
+  <td>科技日爆</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">435,568</td>
+  <td class="n">4,850</td>
+  <td class="n">3.94%</td>
+  <td class="n">¥30.13</td>
+  <td class="n">¥2.71</td>
+  <td><span class="vid-link" data-url="72897461998" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">《怪奇物语》的隐藏细节，被TCL X11L全扒出…</td>
+</tr><tr>
+  <td class="n">5</td>
+  <td>科技纪元v</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">417,344</td>
+  <td class="n">4,623</td>
+  <td class="n">3.43%</td>
+  <td class="n">¥57.36</td>
+  <td class="n">¥5.18</td>
+  <td><span class="vid-link" data-url="79987607261" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">SQD-Mini LED 重新定义高端显示#TC…</td>
+</tr><tr>
+  <td class="n">6</td>
+  <td>青年科技Pro</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">303,706</td>
+  <td class="n">4,548</td>
+  <td class="n">6.17%</td>
+  <td class="n">¥64.31</td>
+  <td class="n">¥4.29</td>
+  <td><span class="vid-link" data-url="92429050785" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">TCL Q9M Pro强势来袭，搭载机皇同源SQ…</td>
+</tr><tr>
+  <td class="n">7</td>
+  <td>明星娱乐最前线</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">501,698</td>
+  <td class="n">4,318</td>
+  <td class="n">3.40%</td>
+  <td class="n">¥10.26</td>
+  <td class="n">¥1.19</td>
+  <td><span class="vid-link" data-url="80184459374" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">青蛙公主的走心应援背后，是TCL的硬核助攻#谷爱…</td>
+</tr><tr>
+  <td class="n">8</td>
+  <td>SocialBeta</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">336,370</td>
+  <td class="n">4,150</td>
+  <td class="n">8.60%</td>
+  <td class="n">¥149.84</td>
+  <td class="n">¥12.14</td>
+  <td><span class="vid-link" data-url="86043792402" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">2026 米兰冬奥落下帷幕，不少中国品牌们留下了…</td>
+</tr><tr>
+  <td class="n">9</td>
+  <td>极目新闻</td>
+  <td>TCL科技集团股份有限公司</td>
+  <td class="n">505,430</td>
+  <td class="n">4,053</td>
+  <td class="n">3.02%</td>
+  <td class="n">¥41.55</td>
+  <td class="n">¥5.18</td>
+  <td><span class="vid-link" data-url="80186865550" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">谷爱凌双奥火炬手新身份！与奥林匹克全球合作伙伴T…</td>
+</tr><tr>
+  <td class="n">10</td>
+  <td>杰明科技课堂</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">224,875</td>
+  <td class="n">3,991</td>
+  <td class="n">4.51%</td>
+  <td class="n">¥91.05</td>
+  <td class="n">¥5.13</td>
+  <td><span class="vid-link" data-url="87123156417" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">TCL首开显示器独立发布会，三款旗舰硬刚行业参数…</td>
+</tr></tbody>
+  </table>
+  <div class="callout good" style="margin-top:8px">
+    <b>👉 A 象限可执行结论</b>：①将这 10 条优先进入加热推荐池，重点放大互动率 ≥5% 的 Top5；②A 象限高互动达人（平均互动率 4.45%）是 TCL 的<b>内容共鸣核心资产</b>，下批选号 brief 重点找同类高互动能力达人；③加热定向上可叠加 TCL 已有话题/产品方向以延续品牌 IP。
+  </div>
+
+  <h3>📺 D 第四象限（高播放低互动）— 播放 TOP 10 达人列表</h3>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+    流量大但互动转化低的"流量空转"账号，按播放量排序 Top 10 — <b>需复盘是 KOL 内容力问题还是分发匹配问题</b>。CPM 低（&lt;¥10）的可保留做曝光基础盘；CPM 高（&gt;¥30）的建议调整投放策略或下批不再合作。
+  </p>
+  <table>
+    <thead><tr><th class="n">#</th><th>达人</th><th>主体</th><th class="n">播放</th><th class="n">爱心赞</th>
+    <th class="n">互动率</th><th class="n">CPM</th><th>视频</th><th>内容摘要</th></tr></thead>
+    <tbody><tr>
+  <td class="n">1</td>
+  <td>Amy艾米日记</td>
+  <td>TCL家用电器(合肥)有限公司</td>
+  <td class="n">1,112,524</td>
+  <td class="n">3,459</td>
+  <td class="n">0.83%</td>
+  <td class="n">¥25.30</td>
+  <td><span class="vid-link" data-url="90598910773" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">洗得净、不伤衣、除菌净，一台全搞定#TCL超级筒…</td>
+</tr><tr>
+  <td class="n">2</td>
+  <td>广告门APP</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">874,030</td>
+  <td class="n">3,001</td>
+  <td class="n">1.16%</td>
+  <td class="n">¥45.05</td>
+  <td><span class="vid-link" data-url="87877420445" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">2026米兰科尔蒂纳，当所有人还在讨论赛事结果时…</td>
+</tr><tr>
+  <td class="n">3</td>
+  <td>科技Show</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">873,325</td>
+  <td class="n">3,543</td>
+  <td class="n">1.62%</td>
+  <td class="n">¥14.43</td>
+  <td><span class="vid-link" data-url="89145791833" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">SQD普及元年强势来袭，TCL T7M Pro成…</td>
+</tr><tr>
+  <td class="n">4</td>
+  <td>多米夫妇的家</td>
+  <td>惠州酷友网络科技有限公司</td>
+  <td class="n">868,761</td>
+  <td class="n">1,430</td>
+  <td class="n">0.61%</td>
+  <td class="n">¥36.26</td>
+  <td><span class="vid-link" data-url="82140692349" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">谁懂啊家人们！过年我爸妈囤货，直接把家逛成小超市…</td>
+</tr><tr>
+  <td class="n">5</td>
+  <td>酷科技范</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">775,094</td>
+  <td class="n">3,325</td>
+  <td class="n">1.65%</td>
+  <td class="n">¥54.19</td>
+  <td><span class="vid-link" data-url="96268562489" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">全场景大屏+AI双buff拉满，TCL商显在In…</td>
+</tr><tr>
+  <td class="n">6</td>
+  <td>橘子娱乐</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">734,211</td>
+  <td class="n">2,702</td>
+  <td class="n">1.09%</td>
+  <td class="n">¥4.00</td>
+  <td><span class="vid-link" data-url="80032086746" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">TCL为自家代言人谷爱凌组织最强大应援团，排面拉…</td>
+</tr><tr>
+  <td class="n">7</td>
+  <td>明星娱乐一线x</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">726,381</td>
+  <td class="n">3,551</td>
+  <td class="n">1.67%</td>
+  <td class="n">¥3.54</td>
+  <td><span class="vid-link" data-url="80035056223" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">谷爱凌双马尾亮相，TCL最强应援团陪伴爱凌每一程…</td>
+</tr><tr>
+  <td class="n">8</td>
+  <td>毒角SHOW</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">597,272</td>
+  <td class="n">3,662</td>
+  <td class="n">4.31%</td>
+  <td class="n">¥8.79</td>
+  <td><span class="vid-link" data-url="78007210460" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">给咖啡馆上个新科技的狠活…全面升级下设备…#CE…</td>
+</tr><tr>
+  <td class="n">9</td>
+  <td>新科技评论</td>
+  <td>TCL实业控股股份有限公司</td>
+  <td class="n">557,505</td>
+  <td class="n">3,225</td>
+  <td class="n">2.25%</td>
+  <td class="n">¥52.73</td>
+  <td><span class="vid-link" data-url="96269203727" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">打破造屏的边界！TCL商显方案成为零售增长引擎#…</td>
+</tr><tr>
+  <td class="n">10</td>
+  <td>最人物</td>
+  <td>辛克莱尔(北京)信息咨询有限公司</td>
+  <td class="n">545,394</td>
+  <td class="n">3,396</td>
+  <td class="n">3.12%</td>
+  <td class="n">¥64.69</td>
+  <td><span class="vid-link" data-url="85958351752" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">天才少女，如何看待自我反省和自我成长？在谷爱凌看…</td>
+</tr></tbody>
+  </table>
+  <div class="callout warn" style="margin-top:8px">
+    <b>👉 D 象限可执行结论</b>：①低 CPM 的"流量基础盘"（CPM &lt;¥10 的）可保留以做曝光基本盘但不再期待互动转化；②高 CPM 高播放低互动的（如 CPM &gt;¥30）属于"无效流量"，建议下批不续签；③可与 D 象限达人沟通"是否承接 B 象限式剧情/生活场景内容"，把流量盘活。
+  </div>
+</div>
+
+<div class="sec">
+  <h2>④ 加热效果分析 — TCL vs 行业大盘</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+    📌 表注：三行口径全部来自汇总表「<b>去官号高管</b>」sheet 中的预聚合行（品牌行→该品牌、大家电行→汇总表已算好的「大家电」聚合行、消电大盘行→汇总表已算好的「消电大盘」聚合行），与品牌行同口径直接读取，未做二次加权。<br/>⚠️ 若直接打开 brand_summary Excel 默认看到的是「保留全部」sheet，数据会略高，差额来自被排除的官号/高管订单，属正常口径差异。
+  </p>
+  <table style="margin-bottom:18px">
+    <thead><tr><th>主体</th><th class="n">加热消耗</th><th class="n">加热占比</th><th class="n">CPM 变化</th><th class="n">CPE 变化</th>
+    <th class="n">友赞成本变化</th>  <th class="n">CPC 变化</th></tr></thead>
+    <tbody><tr class="row-hl">
+  <td>TCL整体</td>
+  <td class="n">¥80,263</td>
+  <td class="n">1.85%</td>
+  <td class="n"><span class="chg good">↓0.0%</span></td>
+  <td class="n"><span class="chg good">↓1.5%</span></td>
+  <td class="n"><span class="chg good">↓2.1%</span></td>
+  <td class="n"><span class="chg good">↓84.6%</span></td>
+</tr><tr class="row-total">
+  <td>大家电整体</td>
+  <td class="n">¥804,227</td>
+  <td class="n">3.85%</td>
+  <td class="n"><span class="chg good">↓3.7%</span></td>
+  <td class="n"><span class="chg good">↓5.1%</span></td>
+  <td class="n"><span class="chg good">↓4.6%</span></td>
+  <td class="n"><span class="chg good">↓51.1%</span></td>
+</tr><tr class="row-xd">
+  <td>消电大盘</td>
+  <td class="n">¥9,848,055</td>
+  <td class="n">13.34%</td>
+  <td class="n"><span class="chg good">↓16.0%</span></td>
+  <td class="n"><span class="chg bad">↑1.2%</span></td>
+  <td class="n"><span class="chg bad">↑0.7%</span></td>
+  <td class="n"><span class="chg good">↓72.0%</span></td>
+</tr></tbody>
+  </table>
+  <div class="callout info">
+    <b>📊 加热效果解读</b>（变化% = 加热段 vs 纯商单段，负值表示加热降本）<br/>
+    • <b>TCL</b>：CPM 变化 <span class="chg good">↓0.0%</span> / CPE 变化 <span class="chg good">↓1.5%</span> / CPC 变化 <span class="chg good">↓84.6%</span> / 友赞成本变化 <span class="chg good">↓2.1%</span>。<br/>
+    • <b>大家电整体</b>：CPM 变化 <span class="chg good">↓3.7%</span> / CPE 变化 <span class="chg good">↓5.1%</span> / 友赞成本变化 <span class="chg good">↓4.6%</span>（汇总表预聚合行直读）。<br/>
+    • <b>消电大盘</b>：CPM 变化 <span class="chg good">↓16.0%</span> / CPE 变化 <span class="chg bad">↑1.2%</span> / 友赞成本变化 <span class="chg bad">↑0.7%</span>（汇总表预聚合行直读）。<br/>
+    • <b>TCL</b>加热占比 <b>1.85%</b>（大家电 3.85% / 消电大盘 13.34%）。
+  </div>
+
+  <h3>TCL加热样本明细 — 共 9 条 / 好样本 0 条（≥2 项指标降本）</h3>
+  <table>
+    <thead><tr><th>达人</th><th>加热目标</th><th class="n">加热花费</th>
+    <th class="n">CPM 变化</th><th class="n">CPE 变化</th><th class="n">友赞成本变化</th>
+    <th class="n">CPC 变化</th>
+    <th>视频</th><th>内容摘要</th></tr></thead>
+    <tbody><tr class="">
+  <td>Amy艾米日记 </td>
+  <td>点击</td>
+  <td class="n">¥6,100.00</td>
+  <td class="n"><span class="chg good">↓12.6%</span></td>
+  <td class="n"><span class="chg bad">↑23.3%</span></td>
+  <td class="n"><span class="chg bad">↑25.2%</span></td>
+  <td class="n"><span class="chg good">↓36.3%</span></td>
+  <td><span class="vid-link" data-url="90598910773" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">洗得净、不伤衣、除菌净，一台全搞定#TCL超级筒…</td>
+</tr><tr class="">
+  <td>Lavie欣蔓 </td>
+  <td>点击</td>
+  <td class="n">¥4,300.00</td>
+  <td class="n"><span class="chg good">↓7.8%</span></td>
+  <td class="n"><span class="chg bad">↑19.0%</span></td>
+  <td class="n"><span class="chg bad">↑19.1%</span></td>
+  <td class="n"><span class="chg good">↓22.4%</span></td>
+  <td><span class="vid-link" data-url="90594355050" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">打破人生「不可能三角」，拥有不止一种配方的人生。…</td>
+</tr><tr class="">
+  <td>张师傅评测 </td>
+  <td>点击</td>
+  <td class="n">¥4,800.00</td>
+  <td class="n"><span class="chg good">↓5.4%</span></td>
+  <td class="n"><span class="chg bad">↑15.3%</span></td>
+  <td class="n"><span class="chg bad">↑16.6%</span></td>
+  <td class="n"><span class="chg good">↓19.8%</span></td>
+  <td><span class="vid-link" data-url="90420517918" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">给衣服升个头等舱，你猜要多少钱？#TCL超级筒洗…</td>
+</tr><tr class="">
+  <td>吉米猫wo </td>
+  <td>品牌转化</td>
+  <td class="n">¥500.00</td>
+  <td class="n"><span class="chg good">↓0.8%</span></td>
+  <td class="n"><span class="chg bad">↑2.2%</span></td>
+  <td class="n"><span class="chg bad">↑2.2%</span></td>
+  <td class="n"><span class="chg n">0%</span></td>
+  <td><span class="vid-link" data-url="90415624440" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">一不注意孩子就把猫咪当妈妈了～ 真闹心～#TCL…</td>
+</tr><tr class="">
+  <td>三问学姐 </td>
+  <td>点击</td>
+  <td class="n">¥7,100.00</td>
+  <td class="n"><span class="chg bad">↑4.0%</span></td>
+  <td class="n"><span class="chg bad">↑41.5%</span></td>
+  <td class="n"><span class="chg bad">↑43.4%</span></td>
+  <td class="n"><span class="chg good">↓22.5%</span></td>
+  <td><span class="vid-link" data-url="90412368727" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">一台全能的洗衣机到底什么样？我的TCL T7W …</td>
+</tr><tr class="">
+  <td>未来科技洞察 </td>
+  <td>点赞</td>
+  <td class="n">¥17,494.34</td>
+  <td class="n"><span class="chg bad">↑26.0%</span></td>
+  <td class="n"><span class="chg good">↓29.3%</span></td>
+  <td class="n"><span class="chg good">↓37.5%</span></td>
+  <td class="n"><span class="chg n">0%</span></td>
+  <td><span class="vid-link" data-url="89145676332" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">2026年TCL电视春季新品发布会，开启SQD-…</td>
+</tr><tr class="">
+  <td>科技新洞察 </td>
+  <td>点赞</td>
+  <td class="n">¥20,413.71</td>
+  <td class="n"><span class="chg bad">↑48.1%</span></td>
+  <td class="n"><span class="chg good">↓11.4%</span></td>
+  <td class="n"><span class="chg good">↓15.6%</span></td>
+  <td class="n"><span class="chg n">0%</span></td>
+  <td><span class="vid-link" data-url="85200323857" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">技术标准之战：TCL如何用一块屏，诠释冬奥会的“…</td>
+</tr><tr class="">
+  <td>前沿科技范 </td>
+  <td>点赞</td>
+  <td class="n">¥9,000.00</td>
+  <td class="n"><span class="chg bad">↑34.0%</span></td>
+  <td class="n"><span class="chg good">↓27.7%</span></td>
+  <td class="n"><span class="chg good">↓22.3%</span></td>
+  <td class="n"><span class="chg n">0%</span></td>
+  <td><span class="vid-link" data-url="85200323850" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">米兰冬奥会官方转播终端，第一次由中国品牌担纲。但…</td>
+</tr><tr class="">
+  <td>暴哥说 </td>
+  <td>点赞</td>
+  <td class="n">¥10,555.17</td>
+  <td class="n"><span class="chg bad">↑27.7%</span></td>
+  <td class="n"><span class="chg good">↓14.7%</span></td>
+  <td class="n"><span class="chg good">↓24.8%</span></td>
+  <td class="n"><span class="chg n">0%</span></td>
+  <td><span class="vid-link" data-url="85200323770" onclick="navigator.clipboard.writeText(this.dataset.url);this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500);">📋 视频</span></td>
+  <td style="font-size:11px;color:#666">中国科技高光时刻!SQD-Mini LED显示技…</td>
+</tr></tbody>
+  </table>
+  <div class="kol-insight">
+    <b>变化值说明</b>：与该订单纯商单阶段对比。↓ 绿色 = 成本下降（加热有效）；↑ 红色 = 成本上升（定向待优化）。
+  </div>
+</div>
+
+<div class="sec">
+  <h2>⑤ 附录：事业部 / 代理商明细（共 10 个主体｜品牌 5 个 + 代理 5 个）</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+    📌 排序规则：品牌方主体在前（41 单 / 34.5%），代理商在后（78 单 / 65.5%）；组内按订单数降序。
+  </p>
+  <table>
+    <thead><tr><th>主体</th><th class="n">合作达人数</th><th class="n">互选消耗</th><th class="n">加热消耗</th>
+    <th class="n">CPM</th><th class="n">互动率</th><th class="n">友赞率</th>
+    <th class="n">友赞成本</th></tr></thead>
+    <tbody><tr class="">
+  <td>TCL实业控股股份有限公司 <span class="tag-good">品牌</span></td>
+  <td class="n">19</td>
+  <td class="n">¥741,562</td>
+  <td class="n">¥17,494</td>
+  <td class="n">¥70.80</td>
+  <td class="n">2.70%</td>
+  <td class="n">0.83%</td>
+  <td class="n">¥8.52</td>
+</tr><tr class="">
+  <td>TCL家用电器(合肥)有限公司 <span class="tag-good">品牌</span></td>
+  <td class="n">7</td>
+  <td class="n">¥289,065</td>
+  <td class="n">¥22,800</td>
+  <td class="n">¥40.26</td>
+  <td class="n">2.35%</td>
+  <td class="n">0.51%</td>
+  <td class="n">¥7.83</td>
+</tr><tr class="">
+  <td>惠州酷友网络科技有限公司 <span class="tag-good">品牌</span></td>
+  <td class="n">7</td>
+  <td class="n">¥118,125</td>
+  <td class="n">¥0</td>
+  <td class="n">¥65.35</td>
+  <td class="n">1.85%</td>
+  <td class="n">0.52%</td>
+  <td class="n">¥12.66</td>
+</tr><tr class="">
+  <td>TCL科技集团股份有限公司 <span class="tag-good">品牌</span></td>
+  <td class="n">5</td>
+  <td class="n">¥116,550</td>
+  <td class="n">¥0</td>
+  <td class="n">¥24.38</td>
+  <td class="n">3.29%</td>
+  <td class="n">0.70%</td>
+  <td class="n">¥3.46</td>
+</tr><tr class="">
+  <td>TCL空调器(中山)有限公司 <span class="tag-good">品牌</span></td>
+  <td class="n">2</td>
+  <td class="n">¥16,800</td>
+  <td class="n">¥0</td>
+  <td class="n">¥16.34</td>
+  <td class="n">2.38%</td>
+  <td class="n">0.60%</td>
+  <td class="n">¥2.74</td>
+</tr><tr class="row-divider"><td colspan="8" style="background:#f0efeb;font-size:12px;color:var(--muted);padding:6px 10px;"><b>—— 以下为代理商 (5 个) ——</b></td></tr><tr class="row-agency">
+  <td>辛克莱尔(北京)信息咨询有限公司 <span class="tag-info">代理</span></td>
+  <td class="n">49</td>
+  <td class="n">¥1,886,957</td>
+  <td class="n">¥0</td>
+  <td class="n">¥35.74</td>
+  <td class="n">2.60%</td>
+  <td class="n">0.62%</td>
+  <td class="n">¥5.74</td>
+</tr><tr class="row-agency">
+  <td>深圳市影创谷传媒有限公司 <span class="tag-info">代理</span></td>
+  <td class="n">12</td>
+  <td class="n">¥208,120</td>
+  <td class="n">¥39,969</td>
+  <td class="n">¥30.39</td>
+  <td class="n">3.48%</td>
+  <td class="n">0.98%</td>
+  <td class="n">¥3.10</td>
+</tr><tr class="row-agency">
+  <td>合肥种草羊文化传媒有限公司 <span class="tag-info">代理</span></td>
+  <td class="n">7</td>
+  <td class="n">¥732,375</td>
+  <td class="n">¥0</td>
+  <td class="n">¥80.72</td>
+  <td class="n">2.77%</td>
+  <td class="n">0.48%</td>
+  <td class="n">¥16.84</td>
+</tr><tr class="row-agency">
+  <td>广州兴湾影视科技有限公司 <span class="tag-info">代理</span></td>
+  <td class="n">2</td>
+  <td class="n">¥145,950</td>
+  <td class="n">¥0</td>
+  <td class="n">¥18.68</td>
+  <td class="n">1.13%</td>
+  <td class="n">0.20%</td>
+  <td class="n">¥9.25</td>
+</tr><tr class="row-agency">
+  <td>湖北抖快腾文化传媒有限公司 <span class="tag-info">代理</span></td>
+  <td class="n">1</td>
+  <td class="n">¥6,982</td>
+  <td class="n">¥0</td>
+  <td class="n">¥19.19</td>
+  <td class="n">1.56%</td>
+  <td class="n">0.59%</td>
+  <td class="n">¥3.24</td>
+</tr></tbody>
+  </table>
+</div>
+<div class="foot">数据来源：互选商单表 + 加热表（2026 YTD）｜数据口径：剔除官号/高管号｜生成时间：2026-05-11</div>
+</div>
+</body></html>
